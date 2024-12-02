@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Task Manager</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background-color: #0c0c1e;
+            overflow-x: hidden;
+        }
+
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .cosmic-button {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(37, 117, 252, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cosmic-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.6s;
+        }
+
+        .cosmic-button:hover::before {
+            left: 100%;
+        }
+
+        .cosmic-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(37, 117, 252, 0.8);
+        }
+
+        #taskList {
+            margin-top: 30px;
+        }
+
+        .task-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-actions button {
+            margin-left: 10px;
+            background-color: transparent;
+            border: 1px solid;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .task-actions .edit-btn {
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+
+        .task-actions .delete-btn {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="space-background" id="spaceBackground"></div>
+    <div class="container">
+        <h1 style="color: white;">Cosmic Task Manager</h1>
+        <button class="cosmic-button" onclick="showTaskModal()">+ Add New Task</button>
+        <div id="taskList"></div>
+    </div>
+
+    <div id="taskModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; display:flex; justify-content:center; align-items:center;">
+        <div style="background:white; padding:30px; border-radius:10px; width:400px;">
+            <h2>Create New Task</h2>
+            <input type="text" id="taskTitle" placeholder="Task Title" style="width:100%; margin-bottom:10px; padding:10px;">
+            <textarea id="taskDescription" placeholder="Task Description" style="width:100%; margin-bottom:10px; padding:10px;"></textarea>
+            <button onclick="addTask()" style="background-color:#2575fc; color:white; border:none; padding:10px 20px; border-radius:5px;">Save Task</button>
+            <button onclick="closeTaskModal()" style="background-color:#dc3545; color:white; border:none; padding:10px 20px; border-radius:5px; margin-left:10px;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function createStars() {
+            const background = document.getElementById('spaceBackground');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.width = `${Math.random() * 3}px`;
+                star.style.height = star.style.width;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                background.appendChild(star);
+            }
+        }
+
+        function showTaskModal() {
+            document.getElementById('taskModal').style.display = 'flex';
+        }
+
+        function closeTaskModal() {
+            document.getElementById('taskModal').style.display = 'none';
+        }
+
+        function addTask() {
+            const title = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDescription').value;
+
+            if (title.trim() === '') {
+                alert('Please enter a task title');
+                return;
+            }
+
+            const taskList = document.getElementById('taskList');
+            const taskItem = document.createElement('div');
+            taskItem.classList.add('task-item');
+            taskItem.innerHTML = `
+                <div>
+                    <h3 style="color:white; margin:0;">${title}</h3>
+                    <p style="color:#ccc; margin:5px 0;">${description}</p>
+                </div>
+                <div class="task-actions">
+                    <button class="edit-btn" onclick="editTask(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteTask(this)">Delete</button>
+                </div>
+            `;
+            taskList.appendChild(taskItem);
+
+            // Reset and close modal
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDescription').value = '';
+            closeTaskModal();
+        }
+
+        function editTask(button) {
+            const taskItem = button.closest('.task-item');
+            const title = taskItem.querySelector('h3');
+            const description = taskItem.querySelector('p');
+
+            const newTitle = prompt('Edit Task Title', title.textContent);
+            const newDescription = prompt('Edit Task Description', description.textContent);
+
+            if (newTitle) title.textContent = newTitle;
+            if (newDescription) description.textContent = newDescription;
+        }
+
+        function deleteTask(button) {
+            const taskItem = button.closest('.task-item');
+            taskItem.remove();
+        }
+
+        // Initialize stars on page load
+        window.onload = createStars;
+    </script>
+</body>
+</html>

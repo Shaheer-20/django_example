@@ -1,0 +1,124 @@
+{% extends "myapp/base.html" %}
+{% block content %}
+    <h1 class="page-title">Edit Task</h1>
+    <!-- Form for Editing Task -->
+    <div class="card p-4 mt-4 task-edit-card">
+        <div class="card-body">
+            <form method="POST" class="edit-task-form">
+                {% csrf_token %}
+                <div class="input-container mb-3 title-input">
+                    <input
+                        placeholder="Enter Task Title"
+                        type="text"
+                        name="title"
+                        value="{{ task.title }}"
+                        required
+                    >
+                </div>
+                
+                <div class="input-container mb-3 description-input">
+                    <textarea
+                        placeholder="Enter Task Description"
+                        name="description"
+                        required
+                    >{{ task.description }}</textarea>
+                </div>
+                
+                <div class="input-container mb-3 submit-container">
+                    <button type="submit" class="button save-changes-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .page-title {
+            text-align: center;
+            animation: slideInRight 0.7s ease-out;
+            margin-bottom: 30px;
+        }
+
+        .task-edit-card {
+            animation: slideInRight 0.9s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .task-edit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+        }
+
+        .title-input {
+            animation: slideInRight 1s ease-out;
+        }
+
+        .title-input input {
+            transition: all 0.3s ease;
+        }
+
+        .title-input input:focus {
+            box-shadow: 0 0 10px rgba(73, 152, 255, 0.3);
+            border-color: #4998FF;
+        }
+
+        .description-input {
+            animation: slideInRight 1.2s ease-out;
+        }
+
+        .description-input textarea {
+            transition: all 0.3s ease;
+            min-height: 150px;
+        }
+
+        .description-input textarea:focus {
+            box-shadow: 0 0 10px rgba(73, 152, 255, 0.3);
+            border-color: #4998FF;
+        }
+
+        .submit-container {
+            animation: slideInRight 1.4s ease-out;
+        }
+
+        .save-changes-btn {
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .save-changes-btn:hover {
+            transform: scale(1.05);
+            background-color: #0056b3;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .task-edit-card {
+                margin: 15px;
+                padding: 15px !important;
+            }
+        }
+    </style>
+{% endblock %}
